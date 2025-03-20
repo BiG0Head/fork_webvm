@@ -7,6 +7,25 @@ RUN apt-get -y install apt-utils gcc \
 	patch wamerican ucf manpages \
 	file luajit make lua50 dialog curl \
 	less cowsay netcat-openbsd wget
+
+# 安装 Docker
+RUN apt-get -y install docker.io
+
+# 拉取青龙面板镜像
+RUN docker pull whyour/qinglong:latest
+
+# 运行青龙面板容器
+RUN docker run -dit \
+    -v /ql/config:/ql/config \
+    -v /ql/log:/ql/log \
+    -v /ql/db:/ql/db \
+    -p 5700:5700 \
+    --name qinglong \
+    --hostname qinglong \
+    --restart always \
+    whyour/qinglong:latest
+
+
 RUN useradd -m user && echo "user:password" | chpasswd
 COPY --chown=user:user ./examples /home/user/examples
 RUN chmod -R +x  /home/user/examples/lua
